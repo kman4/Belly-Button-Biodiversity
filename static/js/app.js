@@ -3,30 +3,31 @@
 function buildMetadata(sample) {
 
     // Use d3 to select the panel with id of `#sample-metadata`
-    //var metData = data.metadata;
-    //var resultMetData = metdata.filter(sampleObject =>sampleObject.id == metadata);
-    //var results = resultMetData[0];
-
-    var table = d3.select("#sample-metadata");
-    var thead = table.append("thead");
-    var trow = thead.append("tr")
-    trow.append("th").text("Parameter");
-    trow.append("th").text("Value");
-    var tbody = table.append("tbody");
-    
+   
   
     // Use `d3.json` to fetch the metadata for a sample
     d3.json("samples.json").then((data) => {
+
+    var metData = data.metadata;
+    var resultMetData = metData.filter(sampleObject =>sampleObject.id == sample);
+    var results = resultMetData[0];
+    
+     // var metadata = data.metadata;
     //console.log(data);
+    // var array1 = metadata.filter(obj => obj.id === sample);
+    // var result2 = array1[0];
+
+
+     var panel = d3.select("#sample-metadata");
+
+     panel.html("");
     
       // Use `Object.entries` to add each key and value pair to the table
-      Object.entries(data).forEach(([key, value]) => {
-      console.log(`key: ${key}, value: ${value}`);
-      var row = tbody.append("tr");
-      row.append("td").text(key);
-      row.append("td").text(value);
+      Object.entries(results).forEach(([key, value]) => {
+   
+     panel.append("h6").text(`${key} : ${value}`);
       
-      
+      ;
       });
     });
   };
