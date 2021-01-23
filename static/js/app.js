@@ -12,12 +12,6 @@ function buildMetadata(sample) {
     var resultMetData = metData.filter(sampleObject =>sampleObject.id == sample);
     var results = resultMetData[0];
     
-     // var metadata = data.metadata;
-    //console.log(data);
-    // var array1 = metadata.filter(obj => obj.id === sample);
-    // var result2 = array1[0];
-
-
      var panel = d3.select("#sample-metadata");
 
      panel.html("");
