@@ -1,3 +1,37 @@
+//---------------- Metadata Panel --------------------------------------------
+
+function buildMetadata(sample) {
+
+    // Use d3 to select the panel with id of `#sample-metadata`
+    //var metData = data.metadata;
+    //var resultMetData = metdata.filter(sampleObject =>sampleObject.id == metadata);
+    //var results = resultMetData[0];
+
+    var table = d3.select("#sample-metadata");
+    var thead = table.append("thead");
+    var trow = thead.append("tr")
+    trow.append("th").text("Parameter");
+    trow.append("th").text("Value");
+    var tbody = table.append("tbody");
+    
+  
+    // Use `d3.json` to fetch the metadata for a sample
+    d3.json("samples.json").then((data) => {
+    //console.log(data);
+    
+      // Use `Object.entries` to add each key and value pair to the table
+      Object.entries(data).forEach(([key, value]) => {
+      console.log(`key: ${key}, value: ${value}`);
+      var row = tbody.append("tr");
+      row.append("td").text(key);
+      row.append("td").text(value);
+      
+      
+      });
+    });
+  };
+
+
 function retreiveData(sample) {
     d3.json("samples.json").then((data) => {
         var samples = data.samples;
@@ -6,11 +40,13 @@ function retreiveData(sample) {
         var otu_ids = result.otu_ids;
         var otu_labels = result.otu_labels;
         var sample_values = result.sample_values;
+
+
         
 
         var yticks = otu_ids.slice(0,10).map(otuID => `OTU ${otuID}`).reverse();
 
-
+    //  Building bar graph
         var trace1 = {
             x: sample_values.slice(0,10).reverse(),
             y: yticks,
@@ -28,10 +64,22 @@ function retreiveData(sample) {
 
        Plotly.newPlot("bar",data,layout);
 
-    // bubble chart
-    
+    //plot bubble chart    
+      var trace2 = {
+        x: otu_ids,
+        y: sample_values,
+        mode: "markers",
+        marker: { size: sample_values,
+        color: otu_ids},
+        hovertext: otu_labels
+      };
+      var layout2 = {title:"OTU ID"};
+      var data2 = [trace2];
+      Plotly.newPlot("bubble",data2,layout2);
     });
-    };
+    
+    
+};
 
 function init(){
     var dropDown =  d3.select("#selDataset");
@@ -43,69 +91,29 @@ function init(){
             .property("value", sample);
 
         });
+
+  // Use the first sample from the list to build the initial plots
+
         var firstSample = sampleNames[0];
         retreiveData(firstSample);
-        //met data first sample
+        buildMetadata(firstSample);
+        buildGauge(firstSample);
+        
     });
     }
 
       
-function buildTable(data) {
-        var table = d3.select("#sample-metadata");
-        var tbody = table.select("tbody");
-        var trow;
-        for (var i = 0; i < 12; i++) {
-          trow = tbody.append("tr");
-          trow.append("td").text(ethnicity[i]);
-          trow.append("td").text(gender[i]);
-          trow.append("td").text(age[i]);
-          trow.append("td").text(location[i]);
-          trow.append("td").text(bbtype[i]);
-          trow.append("td").text(wfreq[i]);
-        }
-    }    
+  // Fetch new data each time a new sample is selected
+
 
 function optionChanged(newSample){
         retreiveData(newSample);
+        buildMetadata(newSample);
+        buildGauge(newSample);
 }  
+
+// Initialize the dashboard
 
 
 init();
     
-
-//console.log(samples);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
